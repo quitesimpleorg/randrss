@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x 
 set -e
-random_default=$( shuf -n 1 -i7200-7523)
+random_default=$( shuf -n 1 -i720-753)
 DEFAULT_PER_ITEM="1-$random_default"
 
 echo "Current default sleep seconds range: $DEFAULT_PER_ITEM"
@@ -31,6 +31,6 @@ while true ; do
 		fi
 		echo "Sleeping for $sleepfor seconds for $url"
 		sleep "$sleepfor"
-		torsocks wget "$url" -U "$useragent" -O "$output"
+		torsocks wget "$url" -U "$useragent" -O "$output" || echo "Failed to fetch $url"
 	done
 done

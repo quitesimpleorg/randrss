@@ -27,7 +27,7 @@ while true ; do
 		fi
 		useragent=""
 		if [ -n "$useragentsfile" ] ; then
-			useragent=$( shuffle -n 1 "$useragentsfile" )
+			useragent=$( shuf -n 1 "$useragentsfile" )
 		fi
 		echo "Sleeping for $sleepfor seconds for $url"
 		sleep "$sleepfor"

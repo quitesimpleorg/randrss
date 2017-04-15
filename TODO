@@ -1,0 +1,5 @@
+-cert pinning option
+-Causing more harm than good because do not match exactly the headers
+sent by the user agents we use.
+-how random is "shuf" and is it a problem?
+-update random default on every loop?

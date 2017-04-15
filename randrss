@@ -1,0 +1,36 @@
+#!/bin/bash
+set -x 
+set -e
+random_default=$( shuf -n 1 -i7200-7523)
+DEFAULT_PER_ITEM="1-$random_default"
+
+echo "Current default sleep seconds range: $DEFAULT_PER_ITEM"
+if [ $# -lt 1 ] ; then
+echo "Usage: $0 [input feeds]"
+exit
+fi
+inputfile="$1"
+useragentsfile="$2"
+if [ ! -f "$inputfile" ] ; then
+echo "inputfile does not exist or is not readable"
+fi
+while true ; do
+	shuf "$inputfile" | while read line ; do
+		url=$( echo "$line" | cut -d":" -f1,2 )
+		output=$( echo "$line" | cut -d":" -f3)
+		range=$( echo "$line" | cut -d":" -f4)
+		sleepfor=0
+		if [ -n "$range" ] ; then
+			sleepfor=$( shuf -i "$range" -n 1)
+		else
+			sleepfor=$( shuf -i "$DEFAULT_PER_ITEM" -n 1)
+		fi
+		useragent=""
+		if [ -n "$useragentsfile" ] ; then
+			useragent=$( shuffle -n 1 "$useragentsfile" )
+		fi
+		echo "Sleeping for $sleepfor seconds for $url"
+		sleep "$sleepfor"
+		torsocks wget "$url" -U "$useragent" -O "$output"
+	done
+done

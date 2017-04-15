@@ -1,0 +1,34 @@
+What is randrss?
+================
+Normal RSS readers usually fetch all feeds more or less at the same time
+at constant intervals. This leaves a signature for anyone who observes
+internet traffic. By looking for this pattern, you are more easily 
+identified.
+
+randrss fetches all your feeds at random intervals at an random order
+over a certain period of time. The feeds will be downloaded and all
+you need is a local webserver. The added benefits of this approach are
+that you don't have to worry about how your client deals with cookies
+etc.
+
+Also, by having only one client fetching the feeds and your readers
+pointed to the randrss's downloaded feeds, you avoid certain trackers
+that may identify you across devices (google's feed proxy, cloudflare),
+because it's very likely that the combination of feeds you read are 
+unique.
+
+randrss fetches the feed using Tor.
+
+Usage
+=====
+First, tweak the shellscript a bit, if you like
+The input file has the following format per line:
+url:output file:(optional paramater for the sleep time, in format x-y)
+
+An optional user agent file contains the user agents we will randomly
+use per feed. One user agent per line.
+
+randrss [input file] [user agent file]
+
+
+

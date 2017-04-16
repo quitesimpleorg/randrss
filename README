@@ -15,15 +15,24 @@ Also, by having only one client fetching the feeds and your readers
 pointed to the randrss's downloaded feeds, you avoid certain trackers
 that may identify you across devices (google's feed proxy, cloudflare),
 because it's very likely that the combination of feeds you read are 
-unique.
+unique. As your feeds are on a single server now, you can isolate your
+RSS reader to its own network container so it can only contact that 
+server. This is probably what you should do to be sure your client does
+not contact the feed servers in any way. In Thunderbird, set 
+browser.chrome.favicons to false.
+
+
 
 randrss fetches the feed using Tor.
+
+The only drawback of this approach is that the time you get new feeds
+is delayed, but that should be acceptable.
 
 Usage
 =====
 First, tweak the shellscript a bit, if you like
 The input file has the following format per line:
-url:output file:(optional paramater for the sleep time, in format x-y)
+url:output file:(optional parameter for the sleep time, in format x-y)
 
 An optional user agent file contains the user agents we will randomly
 use per feed. One user agent per line.

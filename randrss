@@ -6,17 +6,22 @@ DEFAULT_PER_ITEM="1-$random_default"
 
 echo "Current default sleep seconds range: $DEFAULT_PER_ITEM"
 if [ $# -lt 1 ] ; then
-echo "Usage: $0 [input feeds]"
+echo "Usage: $0 inputfile [user agents] [syncnow]"
 exit
 fi
 inputfile="$1"
 useragentsfile="$2"
 if [ ! -f "$inputfile" ] ; then
-echo "inputfile does not exist or is not readable"
-exit
+echo "inputfile does not exist or is not readable" 1>&2
+exit 1
+fi
+
+syncnow=0
+if [ "$3" = "syncnow" ] ; then
+syncnow=1
 fi
 while true ; do
-	shuf "$inputfile" | while read line ; do
+	   shuf "$inputfile" | while read line ; do
 		url=$( echo "$line" | cut -d":" -f1,2 )
 		output=$( echo "$line" | cut -d":" -f3)
 		range=$( echo "$line" | cut -d":" -f4)
@@ -31,7 +36,8 @@ while true ; do
 			useragent=$( shuf -n 1 "$useragentsfile" )
 		fi
 		echo "Sleeping for $sleepfor seconds for $url"
-		sleep "$sleepfor"
+		[ $syncnow -eq 1 ] || sleep "$sleepfor"
 		torsocks wget "$url" -U "$useragent" -O "$output" || echo "Failed to fetch $url"
 	done
+	[ $syncnow -eq 1 ] && exit
 done

@@ -13,6 +13,7 @@ inputfile="$1"
 useragentsfile="$2"
 if [ ! -f "$inputfile" ] ; then
 echo "inputfile does not exist or is not readable"
+exit
 fi
 while true ; do
 	shuf "$inputfile" | while read line ; do

@@ -39,7 +39,7 @@ while true ; do
 		fi
 		
 		fetcher="$FEED_FETCHER"
-		if [ -z "$FEED_FETCHER" ] ; then
+		if [ -z "$fetcher" ] ; then
 			fetcher=$( shuf -n 1 "$fetchersfile" )
 		fi
 		
@@ -48,10 +48,14 @@ while true ; do
 			exit 1
 		fi
 		
+		proxycommand="$FEED_PROXYCOMMAND"
+		if [ -z "$proxycommand" ] ; then
+			proxycommand="torsocks"
+		fi
 		
 		[ $syncnow -eq 1 ] || ( echo "Sleeping for $sleepfor seconds for $url, chosen fetcher $fetcher" && sleep "$sleepfor" )
 		echo "Fetching $FEED_URL with $fetcher"
-		torsocks "$fetcher" "$FEED_URL" "$FEED_OUTPUT" || echo "Failed to fetch $FEED_URL"
+		"$proxycommand" "$fetcher" "$FEED_URL" "$FEED_OUTPUT" || echo "Failed to fetch $FEED_URL"
 	done
 	[ $syncnow -eq 1 ] && exit
 done

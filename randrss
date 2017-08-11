@@ -28,7 +28,7 @@ if [ "$3" = "syncnow" ] ; then
 syncnow=1
 fi
 while true ; do
-	   ls "$feedsconfigdir" | while read line ; do
+	   ls "$feedsconfigdir" | shuf | while read line ; do
 	    source "$feedsconfigdir/$line"
 		
 		sleepfor=0

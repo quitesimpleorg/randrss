@@ -1,0 +1,11 @@
+#!/bin/sh
+set -x
+#Tries more or less to look like Firefox
+if [ $# -ne 2 ] ; then
+echo "usage: $0 url output" 1>&2
+exit 1
+fi
+#better randomize
+useragent=$(shuf -n 1 $RANDRSS_ROOT/fetchers/firefox_agents)
+
+curl "$1" -H "User-Agent: $useragent" -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' --compressed -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' > $2

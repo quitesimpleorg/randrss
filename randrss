@@ -1,18 +1,25 @@
 #!/bin/bash
 set -x 
 set -e
+#TODO: make this more robust
+export RANDRSS_ROOT=$(pwd)
 random_default=$( shuf -n 1 -i720-753)
 DEFAULT_PER_ITEM="1-$random_default"
 
 echo "Current default sleep seconds range: $DEFAULT_PER_ITEM"
 if [ $# -lt 1 ] ; then
-echo "Usage: $0 inputfile [user agents] [syncnow]"
+echo "Usage: $0 inputfile fetchersfile [syncnow]"
 exit
 fi
 inputfile="$1"
-useragentsfile="$2"
+fetchersfile="$2"
 if [ ! -f "$inputfile" ] ; then
 echo "inputfile does not exist or is not readable" 1>&2
+exit 1
+fi
+
+if [ ! -f "$fetchersfile"  ] ; then
+echo "fetchersfile does not exist or is not readable" 1>&2
 exit 1
 fi
 
@@ -31,13 +38,11 @@ while true ; do
 		else
 			sleepfor=$( shuf -i "$DEFAULT_PER_ITEM" -n 1)
 		fi
-		useragent=""
-		if [ -n "$useragentsfile" ] ; then
-			useragent=$( shuf -n 1 "$useragentsfile" )
-		fi
-		echo "Sleeping for $sleepfor seconds for $url"
-		[ $syncnow -eq 1 ] || sleep "$sleepfor"
-		torsocks wget "$url" -U "$useragent" -O "$output" || echo "Failed to fetch $url"
+		fetcher=$( shuf -n 1 "$fetchersfile" )
+		
+		[ $syncnow -eq 1 ] || ( echo "Sleeping for $sleepfor seconds for $url, chosen fetcher $fetcher" && sleep "$sleepfor" )
+		echo "Fetching $url with $fetcher"
+		torsocks ./$fetcher "$url" "$output" || echo "Failed to fetch $url"
 	done
 	[ $syncnow -eq 1 ] && exit
 done

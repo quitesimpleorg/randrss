@@ -8,13 +8,13 @@ DEFAULT_PER_ITEM="1-$random_default"
 
 echo "Current default sleep seconds range: $DEFAULT_PER_ITEM"
 if [ $# -lt 1 ] ; then
-echo "Usage: $0 inputfile fetchersfile [syncnow]"
+echo "Usage: $0 feedsconfigdir fetchersfile [syncnow]"
 exit
 fi
-inputfile="$1"
+feedsconfigdir="$1"
 fetchersfile="$2"
-if [ ! -f "$inputfile" ] ; then
-echo "inputfile does not exist or is not readable" 1>&2
+if [ ! -d "$feedsconfigdir" ] ; then
+echo "$feedsconfigdir does not exist or is not readable" 1>&2
 exit 1
 fi
 
@@ -28,21 +28,30 @@ if [ "$3" = "syncnow" ] ; then
 syncnow=1
 fi
 while true ; do
-	   shuf "$inputfile" | while read line ; do
-		url=$( echo "$line" | cut -d":" -f1,2 )
-		output=$( echo "$line" | cut -d":" -f3)
-		range=$( echo "$line" | cut -d":" -f4)
+	   ls "$feedsconfigdir" | while read line ; do
+	    source "$feedsconfigdir/$line"
+		
 		sleepfor=0
-		if [ -n "$range" ] ; then
+		if [ -n "$FEED_RANGE" ] ; then
 			sleepfor=$( shuf -i "$range" -n 1)
 		else
 			sleepfor=$( shuf -i "$DEFAULT_PER_ITEM" -n 1)
 		fi
-		fetcher=$( shuf -n 1 "$fetchersfile" )
+		
+		fetcher="$FEED_FETCHER"
+		if [ -z "$FEED_FETCHER" ] ; then
+			fetcher=$( shuf -n 1 "$fetchersfile" )
+		fi
+		
+		if [ ! -e "$fetcher" ] ; then
+			echo "$fetcher does not exist" 1>&2
+			exit 1
+		fi
+		
 		
 		[ $syncnow -eq 1 ] || ( echo "Sleeping for $sleepfor seconds for $url, chosen fetcher $fetcher" && sleep "$sleepfor" )
-		echo "Fetching $url with $fetcher"
-		torsocks ./$fetcher "$url" "$output" || echo "Failed to fetch $url"
+		echo "Fetching $FEED_URL with $fetcher"
+		torsocks "$fetcher" "$FEED_URL" "$FEED_OUTPUT" || echo "Failed to fetch $FEED_URL"
 	done
 	[ $syncnow -eq 1 ] && exit
 done

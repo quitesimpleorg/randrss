@@ -1,18 +1,16 @@
 What is randrss?
 ================
 Normal RSS readers usually fetch all feeds more or less at the same time
-at constant intervals. This leaves a signature for anyone who observes
-internet traffic. By looking for this pattern, you are more easily 
-identified.
+at constant intervals. Anyone who monitors internet traffic can
+look for this pattern and therefore identify users.
 
 randrss fetches all your feeds at random intervals at an random order
 over a certain period of time. The feeds will be downloaded and you then
-serve tjhem using you a web server. The added benefits of this approach are
-that you don't have to worry about how your client deals with cookies
-etc.
+serve them using your own web server. This way you also don't have to 
+worry about how your client deals with cookies etc.
 
-Also, by having only one client fetching the feeds and your readers
-pointed to the randrss's downloaded feeds, you avoid certain trackers
+Additionally, by having only one client fetching the feeds and your readers
+pointed to andrss's downloaded feeds, you avoid certain trackers
 that may identify you across devices (google's feed proxy, cloudflare),
 because it's very likely that the combination of feeds you read are 
 unique. As your feeds are on a single server now, you can isolate your
@@ -21,16 +19,15 @@ server. This is probably what you should do to be sure your client does
 not contact the feed servers in any way. In Thunderbird, set 
 browser.chrome.favicons to false.
 
-The only drawback of this approach is that the time you get new feeds
+A drawback of this approach is that the time you get new feeds
 is delayed, but that should be acceptable.
-
-By default, torsocks is used to fetch the feeds.
 
 Usage
 =====
 Fetchers
 --------
-Scripts that request the feeds while trying to look like a normal client.
+Scripts that request the feeds while trying to look like a normal client. 
+By default, they are launched with "torsocks". 
 
 Config file
 -----------
@@ -48,7 +45,7 @@ randrss [path to directory containing the config files] [fetchersfile]
 fetchersfile: take a look at the example file in the repo. It lists
 the paths to the fetchers that will randomly be used.
 
-optional third paramater: "syncnow". Do not sleep for random intervals.
+optional third parameter: "syncnow". Do not sleep for random intervals.
 Fetch all feeds and exit.
 
 

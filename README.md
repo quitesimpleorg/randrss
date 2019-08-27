@@ -4,23 +4,26 @@ Normal RSS readers usually fetch all feeds more or less at the same time
 at constant intervals. Anyone who monitors internet traffic can
 look for this pattern and therefore identify users.
 
-randrss fetches all your feeds at random intervals at an random order
-over a certain period of time. The feeds will be downloaded and you then
-serve them using your own web server. This way you also don't have to 
-worry about how your client deals with cookies etc.
+In contrast, randrss fetches all your feeds at random intervals 
+and also at an random order. The feeds will be downloaded and you then
+serve them using your own web server. It poorly attemps to look like 
+normal browsers while fetching the feeds, and uses Tor by default.
 
-Additionally, by having only one client fetching the feeds and your readers
-pointed to andrss's downloaded feeds, you avoid certain trackers
-that may identify you across devices (google's feed proxy, cloudflare),
-because it's very likely that the combination of feeds you read are 
-unique. As your feeds are on a single server now, you can isolate your
-RSS reader to its own network container so it can only contact your 
-server. This is probably what you should do to be sure your client does
-not contact the feed servers in any way. In Thunderbird, set 
-browser.chrome.favicons to false.
+This has several advantages. You don't need to worry how your
+client deals with cookies for example. Since you point your favorite
+RSS client to randrss's downloaded feeds, you avoid certain trackers 
+like google's feed proxy and cloudflare. They may identify you across 
+devices as it is very likely that the combination of feeds you read
+is unique. In the context of "hardening", this is also useful to
+restrict the servers your RSS client can contact (for instance,
+by using network namespaces, etc.).
 
 A drawback of this approach is that the time you get new feeds
-is delayed, but that should be acceptable.
+is delayed, but that should be acceptable. Furthermore, this tool
+might leave a distinct signature itself. It should still be
+better than fetching everything at once, however it's primary purpose
+is to hide you from the mentioned (potential) trackers. 
+
 
 Usage
 =====

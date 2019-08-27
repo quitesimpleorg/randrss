@@ -5,7 +5,10 @@ if [ $# -ne 2 ] ; then
 echo "usage: $0 url output" 1>&2
 exit 1
 fi
-#better randomize
-useragent=$(shuf -n 1 $RANDRSS_ROOT/fetchers/firefox_agents)
+if find "$RANDRSS_ROOT/fetchers/firefox_version" -mtime +1 | grep -q firefox_version ; then
+curl https://ftp.mozilla.org/pub/firefox/releases/ | grep releases | sed -e 's;.*releases/\(.*\)/".*;\1;g' | grep -v [a-z] | sort -V | tail -n 1 |  sed -e 's/\([0-9][0-9]\)\.\([0-9]\).*/\1.\2/g' > /"$RANDRSS_ROOT/fetchers/firefox_version"
+fi
+VERSION=$(cat "$RANDRSS_ROOT/fetchers/firefox_version")
+useragent=$(shuf -n 1 $RANDRSS_ROOT/fetchers/firefox_agents | sed -e "s/VERSION/$VERSION/g" )
 
-curl "$1" -H "User-Agent: $useragent" -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' --compressed -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' > $2
+curl "$1" -H "User-Agent: $useragent" -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" -H "Accept-Language: en-US,en;q=0.5" --compressed -H "Connection: keep-alive" -H "Upgrade-Insecure-Requests: 1" -H "Cache-Control: max-age=0" > $2

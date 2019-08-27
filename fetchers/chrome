@@ -4,7 +4,10 @@ if [ $# -ne 2 ] ; then
 echo "usage: $0 url output" 1>&2
 exit 1
 fi
-#better randomize
-useragent=$(shuf -n 1 $RANDRSS_ROOT/fetchers/chrome_agents)
+if find "$RANDRSS_ROOT/fetchers/chrome_version" -mtime +1 | grep -q chrome_version ; then
+curl "https://en.wikipedia.org/w/index.php?title=Template:Latest_stable_software_release/Google_Chrome&action=edit" | grep version1 | sed -e 's/.*version1 = \([0-9][0-9]\).\([0-9]\)\+.\([0-9]\+\)\.\([0-9]\+\)..*/\1.\2.\3.\4/g' > /"$RANDRSS_ROOT/fetchers/chrome_version"
+fi
+VERSION=$(cat "$RANDRSS_ROOT/fetchers/chrome_version")
+useragent=$(shuf -n 1 $RANDRSS_ROOT/fetchers/chrome_agents  | sed -e "s/VERSION/$VERSION/g")
 
-curl "$1" -H 'Accept-Encoding: gzip, deflate, br' -H 'Accept-Language: en-US,en;q=0.8' -H 'Upgrade-Insecure-Requests: 1' -H "User-Agent: $useragent" -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'  -H 'Connection: keep-alive'  -H 'Cache-Control: max-age=0' --compressed > $2
+curl "$1" -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H "$useragent" -H 'Sec-Fetch-Mode: navigate' -H 'Sec-Fetch-User: ?1' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3' -H 'Sec-Fetch-Site: same-origin' -H 'Accept-Encoding: gzip, deflate, br' -H 'Accept-Language: en-US,en;q=0.9' --compressed > $2
